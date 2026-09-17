@@ -1,5 +1,5 @@
 # Traffic Light Controller Simulation
-### B.Tech ECE — 2nd Year Mini Project
+
 
 A C program simulating a real-world traffic light controller at a 4-way
 intersection with two perpendicular roads (North-South and East-West),
