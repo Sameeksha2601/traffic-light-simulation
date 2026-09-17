@@ -1,0 +1,11 @@
+# Compiled binaries
+traffic_light
+traffic_light.exe
+*.o
+*.obj
+*.exe
+*.out
+
+# OS files
+.DS_Store
+Thumbs.db
