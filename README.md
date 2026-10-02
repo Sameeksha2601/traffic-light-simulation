@@ -1,94 +1,386 @@
-# Traffic Light Controller Simulation
+# Traffic Light Controller — Verilog RTL
 
+A digital hardware implementation of a two-road traffic light controller using a **4-state Moore FSM** and a **50 MHz timer/clock-enable generator**.
 
-A C program simulating a real-world traffic light controller at a 4-way
-intersection with two perpendicular roads (North-South and East-West),
-implemented using a **finite state machine (FSM)** so only one road is
-ever green at a time — just like a real signal controller.
+The project started as a C-based traffic-light simulation and was upgraded into a synthesizable **Verilog RTL design**, followed by functional verification and RTL synthesis using **Icarus Verilog, GTKWave, Yosys, and ABC**.
 
-## Objective
+---
 
-To design and implement a finite state machine in C that models the
-timed transitions of a two-road traffic light intersection, correctly
-coordinating both directions so they never conflict (i.e. both roads
-green simultaneously), and to apply structured/table-driven control logic
-instead of hardcoded if-else chains.
+## 1. Project Overview
 
-## Tools & Technologies
+The controller manages traffic lights for two roads:
 
-- Language: C (ISO C99)
-- Compiler: GCC
-- No external libraries; uses only the standard library and OS sleep
-  functions (`unistd.h` on Linux/macOS, `windows.h` on Windows — handled
-  automatically via conditional compilation)
+* Road A
+* Road B
 
-## How it works
+Only one road is allowed to have the green light at a time.
 
-The intersection cycles through 4 phases, defined in a small lookup table
-(`phases[]`) rather than nested if-else logic:
+The controller follows this repeating sequence:
 
-| Phase | Road A (N-S) | Road B (E-W) | Duration |
-|---|---|---|---|
-| 1 | GREEN  | RED    | 5s |
-| 2 | YELLOW | RED    | 2s |
-| 3 | RED    | GREEN  | 5s |
-| 4 | RED    | YELLOW | 2s |
+```text
+Road A GREEN  → Road A YELLOW
+       ↓
+Road B GREEN  → Road B YELLOW
+       ↓
+     Repeat
+```
 
-This table-driven design is a common embedded-systems pattern: adding a
-3rd road, changing durations, or adding a pedestrian-crossing phase only
-means editing the table, not rewriting control flow.
+Timing:
 
-## Build
+| State | Road A | Road B | Duration |
+| ----- | ------ | ------ | -------: |
+| S0    | GREEN  | RED    |      5 s |
+| S1    | YELLOW | RED    |      2 s |
+| S2    | RED    | GREEN  |      5 s |
+| S3    | RED    | YELLOW |      2 s |
+
+Complete cycle:
+
+```text
+5 + 2 + 5 + 2 = 14 seconds
+```
+
+---
+
+## 2. Hardware Architecture
+
+```text
+                 50 MHz Clock
+                      │
+                      ▼
+          ┌─────────────────────┐
+          │ Traffic Light Timer │
+          │     26-bit Counter  │
+          └──────────┬──────────┘
+                     │
+                     │ 1-second tick
+                     ▼
+          ┌─────────────────────┐
+          │   4-State Moore FSM │
+          │                     │
+          │ S0 → S1 → S2 → S3  │
+          │ ↑               │   │
+          │ └───────────────┘   │
+          └──────────┬──────────┘
+                     │
+                     ▼
+          ┌─────────────────────┐
+          │   Traffic Outputs   │
+          │                     │
+          │ Road A: R Y G       │
+          │ Road B: R Y G       │
+          └─────────────────────┘
+```
+
+The timer generates a one-clock-cycle **clock-enable pulse** every simulated second.
+
+The FSM uses this pulse to control the traffic-light state transitions.
+
+---
+
+## 3. FSM Design
+
+The controller contains four states:
+
+```text
+S0 → S1 → S2 → S3 → S0
+```
+
+### State S0
+
+```text
+Road A = GREEN
+Road B = RED
+Duration = 5 seconds
+```
+
+### State S1
+
+```text
+Road A = YELLOW
+Road B = RED
+Duration = 2 seconds
+```
+
+### State S2
+
+```text
+Road A = RED
+Road B = GREEN
+Duration = 5 seconds
+```
+
+### State S3
+
+```text
+Road A = RED
+Road B = YELLOW
+Duration = 2 seconds
+```
+
+The FSM is implemented as a **Moore machine**, meaning the traffic-light outputs depend only on the current FSM state.
+
+---
+
+## 4. Module Structure
+
+### `traffic_light_timer.v`
+
+Generates the one-second timing enable from the 50 MHz input clock.
+
+For a 50 MHz clock:
+
+```text
+Clock frequency = 50,000,000 Hz
+Clock period     = 20 ns
+```
+
+The timer counts:
+
+```text
+50,000,000 clock cycles = 1 second
+```
+
+A 26-bit counter is sufficient because:
+
+```text
+2^25  = 33,554,432
+2^26  = 67,108,864
+```
+
+Therefore:
+
+```text
+25 bits → insufficient
+26 bits → sufficient
+```
+
+### `traffic_light_fsm.v`
+
+Implements:
+
+* FSM state register
+* State transition logic
+* State duration counter
+* Traffic-light output decoding
+
+### `traffic_light_top.v`
+
+Integrates the timer and FSM into one top-level hardware module.
+
+---
+
+## 5. Verification
+
+The design was verified using **Icarus Verilog**.
+
+The testbench checks:
+
+* Correct FSM sequence
+* Correct 5-second green duration
+* Correct 2-second yellow duration
+* No conflicting lights
+* No simultaneous green lights
+* Every road always has an active signal
+* Correct state restart after S3
+
+Simulation result:
+
+```text
+========================================
+ALL SEQUENCE CHECKS PASSED
+========================================
+```
+
+The integrated top-level testbench also passed:
+
+```text
+========================================
+TOP-LEVEL TEST PASSED
+========================================
+```
+
+---
+
+## 6. Waveform Verification
+
+VCD waveform files were generated for inspection using GTKWave.
+
+Generated files include:
+
+```text
+traffic_light.vcd
+traffic_light_top.vcd
+```
+
+The waveform can be used to observe:
+
+* Clock
+* Reset
+* One-second tick
+* FSM state
+* Traffic-light outputs
+* State transitions
+
+---
+
+## 7. Simulation
+
+For fast simulation, the testbench uses:
+
+```verilog
+CLK_FREQ = 10
+```
+
+instead of the real 50 MHz value.
+
+Therefore:
+
+```text
+10 clock cycles = 1 simulated second
+```
+
+This allows the complete 14-second traffic sequence to be verified quickly.
+
+Example compilation:
 
 ```bash
-gcc -O2 -Wall -o traffic_light traffic_light.c
+iverilog -o traffic_sim traffic_light_timer.v traffic_light_fsm.v traffic_light_fsm_tb.v
+vvp traffic_sim
 ```
 
-## Run
+Top-level simulation:
 
-**Real-time mode** (waits 1 real second per simulated second, like an
-actual traffic light):
 ```bash
-./traffic_light
+iverilog -o traffic_top_sim traffic_light_timer.v traffic_light_fsm.v traffic_light_top.v traffic_light_top_tb.v
+vvp traffic_top_sim
 ```
 
-**Fast/demo mode** (no waiting — useful for quick testing or a live demo
-without sitting through real seconds):
+---
+
+## 8. RTL Synthesis
+
+The RTL was synthesized using **Yosys** and optimized using **ABC**.
+
+Command:
+
 ```bash
-./traffic_light --fast
+yosys -p "read_verilog traffic_light_timer.v traffic_light_fsm.v traffic_light_top.v; hierarchy -top traffic_light_top; proc; opt; fsm; opt; techmap; opt; abc -g simple; stat" > synthesis_report.txt
 ```
 
-**Limit to a specific number of full cycles** (default runs forever until
-Ctrl+C):
-```bash
-./traffic_light --fast --cycles 3
+Final synthesized design:
+
+```text
+Total generic cells: 163
 ```
 
-Sample output:
+Hierarchy:
+
+| Module | Generic cells |
+| ------ | ------------: |
+| Timer  |           121 |
+| FSM    |            42 |
+| Total  |           163 |
+
+The timer uses more hardware because it contains the large counter required to generate the one-second timing enable from the 50 MHz clock.
+
+**Note:** 163 is a generic synthesized-cell count from Yosys/ABC. It is not a physical ASIC area measurement.
+
+---
+
+## 9. Tools Used
+
+| Tool           | Purpose                 |
+| -------------- | ----------------------- |
+| Verilog        | RTL design              |
+| Icarus Verilog | Simulation              |
+| GTKWave        | Waveform analysis       |
+| Yosys          | RTL synthesis           |
+| ABC            | Logic optimization      |
+| MSYS2 UCRT64   | Development environment |
+
+---
+
+## 10. Project Structure
+
+```text
+traffic-light-simulation/
+│
+├── C/
+│   └── traffic_light.c
+│
+├── Verilog/
+│   ├── traffic_light_timer.v
+│   ├── traffic_light_fsm.v
+│   ├── traffic_light_top.v
+│   ├── traffic_light_fsm_tb.v
+│   ├── traffic_light_top_tb.v
+│   ├── traffic_light.vcd
+│   ├── traffic_light_top.vcd
+│   └── synthesis_report.txt
+│
+├── .gitignore
+└── README.md
 ```
-[Road A (N-S)] Light : GREEN    |   [Road B (E-W)] Light : RED      (next change in 5s)
-[Road A (N-S)] Light : GREEN    |   [Road B (E-W)] Light : RED      (next change in 4s)
-...
-[Road A (N-S)] Light : RED      |   [Road B (E-W)] Light : GREEN    (next change in 5s)
-...
+
+---
+
+## 11. Key Digital Design Concepts Demonstrated
+
+* Finite State Machines
+* Moore FSM
+* State encoding
+* Sequential logic
+* Combinational logic
+* Counters
+* Clock enables
+* Asynchronous reset
+* Parameterized RTL
+* Self-checking testbenches
+* Functional verification
+* RTL synthesis
+* Logic optimization
+* Hardware resource analysis
+
+---
+
+## 12. Future Improvements
+
+Possible extensions include:
+
+* Pedestrian crossing control
+* Emergency vehicle priority
+* Sensor-based traffic control
+* Configurable timing
+* Seven-segment countdown display
+* FPGA board implementation
+* Formal verification
+* Technology-specific timing and area analysis
+
+---
+
+## 13. Project Outcome
+
+This project demonstrates the complete digital-design flow:
+
+```text
+C Simulation
+     ↓
+Hardware Specification
+     ↓
+Verilog RTL
+     ↓
+FSM + Timer Design
+     ↓
+Simulation
+     ↓
+Self-Checking Verification
+     ↓
+Waveform Analysis
+     ↓
+RTL Synthesis
+     ↓
+Logic Optimization
 ```
 
-## Concepts demonstrated
-
-- **Finite state machines**: representing a system's behavior as a fixed
-  set of states with defined transitions — foundational in digital
-  systems/embedded design.
-- **Table-driven design**: encoding transition logic as data (a struct
-  array) rather than branching code, a common real-world embedded pattern.
-- **Timing and synchronization**: coordinating two independent signals so
-  they never enter a conflicting state at the same time.
-- **Cross-platform C**: conditional compilation (`#ifdef _WIN32`) to
-  handle OS-specific sleep functions.
-
-## Possible extensions
-
-- Add a 3rd/4th road for a full 4-way junction
-- Add a pedestrian "WALK/DON'T WALK" signal phase
-- Add an emergency-vehicle override mode (force one road green)
-- Drive it from a hardware timer/interrupt if ported to a microcontroller
-  (e.g. Arduino/8051) instead of software `sleep()`
+The final design was functionally verified and synthesized to **163 generic cells** using Yosys/ABC.
