@@ -1,0 +1,700 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.66 (git sha1 7f8fdfd8d7bc08c749a2a969388d3425d4f369d5, x86_64-w64-mingw32-g++ 16.1.0 -march=nocona -msahf -mtune=generic -O2 -fstack-protector-strong -O3)
+
+-- Running command `read_verilog traffic_light_timer.v traffic_light_fsm.v traffic_light_top.v; hierarchy -top traffic_light_top; proc; opt; fsm; opt; techmap; opt; abc -g simple; stat' --
+
+1. Executing Verilog-2005 frontend: traffic_light_timer.v
+Parsing Verilog input from `traffic_light_timer.v' to AST representation.
+Generating RTLIL representation for module `\traffic_light_timer'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: traffic_light_fsm.v
+Parsing Verilog input from `traffic_light_fsm.v' to AST representation.
+Generating RTLIL representation for module `\traffic_light_fsm'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: traffic_light_top.v
+Parsing Verilog input from `traffic_light_top.v' to AST representation.
+Generating RTLIL representation for module `\traffic_light_top'.
+Successfully finished Verilog frontend.
+
+4. Executing HIERARCHY pass (managing design hierarchy).
+
+4.1. Analyzing design hierarchy..
+Top module:  \traffic_light_top
+Used module:     \traffic_light_fsm
+Used module:     \traffic_light_timer
+Parameter \GREEN_TIME = 5
+Parameter \YELLOW_TIME = 2
+
+4.2. Executing AST frontend in derive mode using pre-parsed AST for module `\traffic_light_fsm'.
+Parameter \GREEN_TIME = 5
+Parameter \YELLOW_TIME = 2
+Generating RTLIL representation for module `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Parameter \CLK_FREQ = 50000000
+
+4.3. Executing AST frontend in derive mode using pre-parsed AST for module `\traffic_light_timer'.
+Parameter \CLK_FREQ = 50000000
+Generating RTLIL representation for module `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+
+4.4. Analyzing design hierarchy..
+Top module:  \traffic_light_top
+Used module:     $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm
+Used module:     $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000
+
+4.5. Analyzing design hierarchy..
+Top module:  \traffic_light_top
+Used module:     $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm
+Used module:     $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000
+Removing unused module `\traffic_light_fsm'.
+Removing unused module `\traffic_light_timer'.
+Removed 2 unused modules.
+
+5. Executing PROC pass (convert processes to netlists).
+
+5.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+5.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$traffic_light_timer.v:11$32 in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+Removed 1 dead cases from process $proc$traffic_light_fsm.v:69$31 in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+Marked 1 switch rules as full_case in process $proc$traffic_light_fsm.v:69$31 in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+Removed 1 dead cases from process $proc$traffic_light_fsm.v:58$30 in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+Marked 1 switch rules as full_case in process $proc$traffic_light_fsm.v:58$30 in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+Marked 3 switch rules as full_case in process $proc$traffic_light_fsm.v:30$18 in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+Removed a total of 2 dead cases.
+
+5.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 2 redundant assignments.
+Promoted 7 assignments to connections.
+
+5.4. Executing PROC_INIT pass (extract init attributes).
+
+5.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \reset in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.$proc$traffic_light_timer.v:11$32'.
+Found async reset \reset in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:30$18'.
+
+5.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~6 debug messages>
+
+5.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.$proc$traffic_light_timer.v:11$32'.
+     1/2: $0\one_sec_tick[0:0]
+     2/2: $0\counter[25:0]
+Creating decoders for process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:69$31'.
+     1/6: $1\road_b_red[0:0]
+     2/6: $1\road_a_green[0:0]
+     3/6: $1\road_b_green[0:0]
+     4/6: $1\road_b_yellow[0:0]
+     5/6: $1\road_a_yellow[0:0]
+     6/6: $1\road_a_red[0:0]
+Creating decoders for process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:58$30'.
+     1/1: $1\next_state[1:0]
+Creating decoders for process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:30$18'.
+     1/2: $0\timer[3:0]
+     2/2: $0\state[1:0]
+
+5.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.\road_a_red' from process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:69$31'.
+No latch inferred for signal `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.\road_a_yellow' from process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:69$31'.
+No latch inferred for signal `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.\road_a_green' from process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:69$31'.
+No latch inferred for signal `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.\road_b_red' from process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:69$31'.
+No latch inferred for signal `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.\road_b_yellow' from process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:69$31'.
+No latch inferred for signal `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.\road_b_green' from process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:69$31'.
+No latch inferred for signal `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.\next_state' from process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:58$30'.
+
+5.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.\one_sec_tick' using process `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.$proc$traffic_light_timer.v:11$32'.
+  created $adff cell `$procdff$94' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.\counter' using process `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.$proc$traffic_light_timer.v:11$32'.
+  created $adff cell `$procdff$97' with positive edge clock and positive level reset.
+Creating register for signal `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.\state' using process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:30$18'.
+  created $adff cell `$procdff$100' with positive edge clock and positive level reset.
+Creating register for signal `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.\timer' using process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:30$18'.
+  created $adff cell `$procdff$103' with positive edge clock and positive level reset.
+
+5.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+5.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 1 empty switch in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.$proc$traffic_light_timer.v:11$32'.
+Removing empty process `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.$proc$traffic_light_timer.v:11$32'.
+Found and cleaned up 1 empty switch in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:69$31'.
+Removing empty process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:69$31'.
+Found and cleaned up 1 empty switch in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:58$30'.
+Removing empty process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:58$30'.
+Found and cleaned up 3 empty switches in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:30$18'.
+Removing empty process `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.$proc$traffic_light_fsm.v:30$18'.
+Cleaned up 6 empty switches.
+
+5.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module traffic_light_top.
+Optimizing module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+<suppressed ~2 debug messages>
+Optimizing module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+<suppressed ~10 debug messages>
+
+6. Executing OPT pass (performing simple optimizations).
+
+6.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module traffic_light_top.
+Optimizing module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+Optimizing module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+
+6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\traffic_light_top'.
+Computing hashes of 2 cells of `\traffic_light_top'.
+Finding duplicate cells in `\traffic_light_top'.
+Finding identical cells in module `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Computing hashes of 6 cells of `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding duplicate cells in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding identical cells in module `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 54 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 26 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+<suppressed ~84 debug messages>
+Removed a total of 28 cells.
+
+6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \traffic_light_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~28 debug messages>
+
+6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \traffic_light_top.
+  Optimizing cells in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+  Optimizing cells in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+    New ctrl vector for $pmux cell $procmux$51: { $auto$opt_reduce.cc:135:opt_pmux$105 $procmux$73_CMP }
+    New ctrl vector for $pmux cell $procmux$66: { $auto$opt_reduce.cc:135:opt_pmux$109 $auto$opt_reduce.cc:135:opt_pmux$107 }
+    New ctrl vector for $pmux cell $procmux$46: { $auto$opt_reduce.cc:135:opt_pmux$111 $procmux$75_CMP }
+    New ctrl vector for $pmux cell $procmux$61: { $auto$opt_reduce.cc:135:opt_pmux$113 $procmux$74_CMP }
+    New ctrl vector for $pmux cell $procmux$41: { $auto$opt_reduce.cc:135:opt_pmux$117 $auto$opt_reduce.cc:135:opt_pmux$115 }
+    New ctrl vector for $pmux cell $procmux$56: { $procmux$72_CMP $auto$opt_reduce.cc:135:opt_pmux$119 }
+  Optimizing cells in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+Performed a total of 6 changes.
+
+6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\traffic_light_top'.
+Computing hashes of 2 cells of `\traffic_light_top'.
+Finding duplicate cells in `\traffic_light_top'.
+Finding identical cells in module `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Computing hashes of 6 cells of `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding duplicate cells in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding identical cells in module `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 34 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 32 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+<suppressed ~6 debug messages>
+Removed a total of 2 cells.
+
+6.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$103 ($adff) from module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm (D = $procmux$80_Y, Q = \timer).
+Adding EN signal on $procdff$100 ($adff) from module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm (D = $procmux$88_Y, Q = \state).
+
+6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \traffic_light_top..
+Finding unused cells or wires in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+Finding unused cells or wires in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+Removed 2 unused cells and 69 unused wires.
+<suppressed ~4 debug messages>
+
+6.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module traffic_light_top.
+Optimizing module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+Optimizing module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+<suppressed ~1 debug messages>
+
+6.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+6.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \traffic_light_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~26 debug messages>
+
+6.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \traffic_light_top.
+  Optimizing cells in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+  Optimizing cells in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+Performed a total of 0 changes.
+
+6.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\traffic_light_top'.
+Computing hashes of 2 cells of `\traffic_light_top'.
+Finding duplicate cells in `\traffic_light_top'.
+Finding identical cells in module `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Computing hashes of 6 cells of `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding duplicate cells in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding identical cells in module `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 32 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Removed a total of 0 cells.
+
+6.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \traffic_light_top..
+Finding unused cells or wires in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+Finding unused cells or wires in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+
+6.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module traffic_light_top.
+Optimizing module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+Optimizing module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+
+6.16. Finished fast OPT passes. (There is nothing left to do.)
+
+7. Executing FSM pass (extract and optimize FSM).
+
+7.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+7.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+7.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \traffic_light_top..
+Finding unused cells or wires in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+Finding unused cells or wires in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+
+7.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+7.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+7.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+8. Executing OPT pass (performing simple optimizations).
+
+8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module traffic_light_top.
+Optimizing module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+Optimizing module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+
+8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\traffic_light_top'.
+Computing hashes of 2 cells of `\traffic_light_top'.
+Finding duplicate cells in `\traffic_light_top'.
+Finding identical cells in module `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Computing hashes of 6 cells of `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding duplicate cells in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding identical cells in module `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 32 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Removed a total of 0 cells.
+
+8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \traffic_light_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~26 debug messages>
+
+8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \traffic_light_top.
+  Optimizing cells in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+  Optimizing cells in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+Performed a total of 0 changes.
+
+8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\traffic_light_top'.
+Computing hashes of 2 cells of `\traffic_light_top'.
+Finding duplicate cells in `\traffic_light_top'.
+Finding identical cells in module `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Computing hashes of 6 cells of `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding duplicate cells in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding identical cells in module `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 32 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Removed a total of 0 cells.
+
+8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \traffic_light_top..
+Finding unused cells or wires in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+Finding unused cells or wires in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+
+8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module traffic_light_top.
+Optimizing module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+Optimizing module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+
+8.9. Finished fast OPT passes. (There is nothing left to do.)
+
+9. Executing TECHMAP pass (map to technology primitives).
+
+9.1. Executing Verilog-2005 frontend: C:\msys64\ucrt64\bin\../share/yosys/techmap.v
+Parsing Verilog input from `C:\msys64\ucrt64\bin\../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+9.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $reduce_and.
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $adffe.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $logic_or.
+Using extmapper simplemap for cells of type $eq.
+Using extmapper simplemap for cells of type $logic_and.
+Running "alumacc" on wrapper $extern:wrap:$add:Y_WIDTH=32:B_WIDTH=32:A_WIDTH=4:B_SIGNED=0:A_SIGNED=0:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$add:Y_WIDTH=32:B_WIDTH=32:A_WIDTH=4:B_SIGNED=0:A_SIGNED=0:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$add:Y_WIDTH=32:B_WIDTH=32:A_WIDTH=4:B_SIGNED=0:A_SIGNED=0:394426c56d1a028ba8fdd5469b163e04011def47.
+Using extmapper simplemap for cells of type $pmux.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $mux.
+Using template $paramod$a7817265ef3ab2ee43da53bbd8a90f6450d412d9\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100000 for cells of type $lcu.
+Using extmapper simplemap for cells of type $pos.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $and.
+Running "alumacc" on wrapper $extern:wrap:$add:Y_WIDTH=26:B_WIDTH=1:A_WIDTH=26:B_SIGNED=0:A_SIGNED=0:394426c56d1a028ba8fdd5469b163e04011def47.
+Using template $extern:wrap:$add:Y_WIDTH=26:B_WIDTH=1:A_WIDTH=26:B_SIGNED=0:A_SIGNED=0:394426c56d1a028ba8fdd5469b163e04011def47 for cells of type $extern:wrap:$add:Y_WIDTH=26:B_WIDTH=1:A_WIDTH=26:B_SIGNED=0:A_SIGNED=0:394426c56d1a028ba8fdd5469b163e04011def47.
+Using extmapper simplemap for cells of type $adff.
+Using template $paramod$a8151eed7df109f18d5adf1169b40bb7b9e884a8\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011010 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011010 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~754 debug messages>
+
+10. Executing OPT pass (performing simple optimizations).
+
+10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module traffic_light_top.
+Optimizing module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+<suppressed ~276 debug messages>
+Optimizing module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+<suppressed ~436 debug messages>
+
+10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\traffic_light_top'.
+Computing hashes of 2 cells of `\traffic_light_top'.
+Finding duplicate cells in `\traffic_light_top'.
+Finding identical cells in module `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Computing hashes of 194 cells of `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding duplicate cells in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Computing hashes of 174 cells of `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding duplicate cells in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+<suppressed ~60 debug messages>
+Finding identical cells in module `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 83 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 72 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 71 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+<suppressed ~36 debug messages>
+Removed a total of 32 cells.
+
+10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \traffic_light_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \traffic_light_top.
+  Optimizing cells in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+  Optimizing cells in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+Performed a total of 0 changes.
+
+10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\traffic_light_top'.
+Computing hashes of 2 cells of `\traffic_light_top'.
+Finding duplicate cells in `\traffic_light_top'.
+Finding identical cells in module `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Computing hashes of 174 cells of `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding duplicate cells in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding identical cells in module `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 71 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Removed a total of 0 cells.
+
+10.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \traffic_light_top..
+Finding unused cells or wires in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+Finding unused cells or wires in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+Removed 12 unused cells and 322 unused wires.
+<suppressed ~14 debug messages>
+
+10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module traffic_light_top.
+Optimizing module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+Optimizing module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+
+10.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+10.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \traffic_light_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+10.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \traffic_light_top.
+  Optimizing cells in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+  Optimizing cells in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+Performed a total of 0 changes.
+
+10.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\traffic_light_top'.
+Computing hashes of 2 cells of `\traffic_light_top'.
+Finding duplicate cells in `\traffic_light_top'.
+Finding identical cells in module `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Computing hashes of 164 cells of `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding duplicate cells in `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000'.
+Finding identical cells in module `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Computing hashes of 69 cells of `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Finding duplicate cells in `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm'.
+Removed a total of 0 cells.
+
+10.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+10.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \traffic_light_top..
+Finding unused cells or wires in module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000..
+Finding unused cells or wires in module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm..
+
+10.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module traffic_light_top.
+Optimizing module $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000.
+Optimizing module $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm.
+
+10.16. Finished fast OPT passes. (There is nothing left to do.)
+
+11. Executing ABC pass (technology mapping using ABC).
+
+11.1. Extracting gate netlist of module `\traffic_light_top' to `<abc-temp-dir>/input.blif'..
+
+11.1.1. Executed ABC.
+Extracted 0 gates and 0 wires to a netlist network with 0 inputs and 0 outputs.
+Don't call ABC as there is nothing to map.
+Removing temp directory.
+
+11.2. Extracting gate netlist of module `$paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000' to `<abc-temp-dir>/input.blif'..
+
+11.2.1. Executed ABC.
+Extracted 137 gates and 164 wires to a netlist network with 26 inputs and 27 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: ======== ABC command line "source <abc-temp-dir>/abc.script"
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+11.2.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:       47
+ABC RESULTS:               NOT cells:       11
+ABC RESULTS:                OR cells:       14
+ABC RESULTS:               XOR cells:       22
+ABC RESULTS:        internal signals:      111
+ABC RESULTS:           input signals:       26
+ABC RESULTS:          output signals:       27
+Removing temp directory.
+
+11.3. Extracting gate netlist of module `$paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm' to `<abc-temp-dir>/input.blif'..
+Replacing 10 occurrences of constant undef bits with constant zero bits
+
+11.3.1. Executed ABC.
+Extracted 63 gates and 72 wires to a netlist network with 7 inputs and 13 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: ======== ABC command line "source <abc-temp-dir>/abc.script"
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+11.3.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:       14
+ABC RESULTS:               BUF cells:        1
+ABC RESULTS:               NOT cells:        8
+ABC RESULTS:                OR cells:       11
+ABC RESULTS:               XOR cells:        3
+ABC RESULTS:        internal signals:       52
+ABC RESULTS:           input signals:        7
+ABC RESULTS:          output signals:       13
+Removing temp directory.
+Removing global temp directory.
+
+12. Printing statistics.
+
+=== traffic_light_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        9 wires
+        9 wire bits
+        9 public wires
+        9 public wire bits
+        8 ports
+        8 port bits
+        2 submodules
+        1   $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm
+        1   $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000
+
+=== $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      169 wires
+      314 wire bits
+        4 public wires
+       29 public wire bits
+        3 ports
+        3 port bits
+      121 cells
+       47   $_AND_
+       27   $_DFF_PP0_
+       11   $_NOT_
+       14   $_OR_
+       22   $_XOR_
+
+=== $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       98 wires
+      206 wire bits
+       12 public wires
+       17 public wire bits
+        9 ports
+        9 port bits
+       42 cells
+       14   $_AND_
+        6   $_DFFE_PP0P_
+        8   $_NOT_
+       11   $_OR_
+        3   $_XOR_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+      163 traffic_light_top
+       42 $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm
+      121 $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000
+
+        +----------Count including submodules.
+        | 
+      276 wires
+      529 wire bits
+       25 public wires
+       55 public wire bits
+       20 ports
+       20 port bits
+        - memories
+        - memory bits
+        - processes
+      163 cells
+       61   $_AND_
+        6   $_DFFE_PP0P_
+       27   $_DFF_PP0_
+       19   $_NOT_
+       25   $_OR_
+       25   $_XOR_
+        2 submodules
+        1   $paramod$f56f652317d07e3869c0862dcee35ca9bee963fc\traffic_light_fsm
+        1   $paramod\traffic_light_timer\CLK_FREQ=s32'00000010111110101111000010000000
+
+End of script. Logfile hash: fbeb518b3c
+Yosys 0.66 (git sha1 7f8fdfd8d7bc08c749a2a969388d3425d4f369d5, x86_64-w64-mingw32-g++ 16.1.0 -march=nocona -msahf -mtune=generic -O2 -fstack-protector-strong -O3)
+Time spent: 3% 13x opt_expr (0 sec), 3% 10x opt_merge (0 sec), ...
